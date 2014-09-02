@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.plugination</groupId>
+		<artifactId>libgdx-connect</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>libgdx-connect-desktop</artifactId>
+	<packaging>jar</packaging>
+	<name>Connecter desktop</name>
+
+	<properties>
+		<mainClass>org.plugination.connect.java.ConnecterDesktop</mainClass>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.plugination</groupId>
+			<artifactId>libgdx-connect-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.badlogicgames.gdx</groupId>
+			<artifactId>gdx</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.badlogicgames.gdx</groupId>
+			<artifactId>gdx-backend-lwjgl</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.badlogicgames.gdx</groupId>
+			<artifactId>gdx-platform</artifactId>
+			<classifier>natives-desktop</classifier>
+		</dependency>
+
+		 <dependency>
+	      <groupId>org.java-websocket</groupId>
+	      <artifactId>Java-WebSocket</artifactId>
+	      <version>1.3.0</version>
+	    </dependency>
+
+	</dependencies>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>../assets</directory>
+			</resource>
+		</resources>
+
+		<plugins>
+			<!-- this run the game when you invoke: mvn integration-test -Pdesktop -->
+			<plugin>
+				<groupId>com.googlecode.mavennatives</groupId>
+				<artifactId>maven-nativedependencies-plugin</artifactId>
+				<version>0.0.6</version>
+				<executions>
+					<execution>
+						<id>unpacknatives</id>
+						<phase>pre-integration-test</phase>
+						<goals><goal>copy</goal></goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<phase>integration-test</phase>
+						<configuration>
+							<target>
+								<java fork="true" classname="${mainClass}" classpathref="maven.test.classpath">
+									<sysproperty key="java.library.path" value="target/natives"/>
+								</java>
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- this builds a totally standalone jar file when you invoke: mvn package -Pdesktop -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>${mainClass}</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+</project>
