@@ -1,4 +1,5 @@
 <module>
+    <inherits name="com.seanchenxi.gwt.webrtc.WebRTC"/>
 	<source path='org'/>
 	<super-source path='super'/>
 </module>

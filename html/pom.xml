@@ -59,6 +59,19 @@
 			<version>${gwt.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>com.seanchenxi.gwt</groupId>
+			<artifactId>gwt-rtc</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>com.seanchenxi.gwt</groupId>
+			<artifactId>gwt-rtc</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<classifier>sources</classifier>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 	<build>

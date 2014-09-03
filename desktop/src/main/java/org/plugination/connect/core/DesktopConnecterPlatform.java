@@ -17,13 +17,21 @@ package org.plugination.connect.core;
 
 import org.plugination.connect.core.Connector;
 import org.plugination.connect.core.ConnectorPlatform;
+import org.plugination.connect.core.webrtc.RTCPeerConnection;
+import org.plugination.connect.core.webrtc.RTCPeerConnection.EventListener;
 import org.plugination.connect.core.websocket.WebSocket;
+import org.plugination.connect.java.DesktopRTCPeerConnection;
 import org.plugination.connect.java.DesktopWebSocket;
 
 public class DesktopConnecterPlatform implements ConnectorPlatform {
 	@Override
 	public WebSocket createWebSocket(String url, WebSocket.EventListener eventListener) {
 		return new DesktopWebSocket(url, eventListener);
+	}
+
+	@Override
+	public RTCPeerConnection createRTCPeerConnection(EventListener listener) {
+		return new DesktopRTCPeerConnection(listener);
 	}
 
 	public static void init() {

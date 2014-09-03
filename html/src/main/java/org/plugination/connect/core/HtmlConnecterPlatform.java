@@ -15,9 +15,11 @@
  ******************************************************************************/
 package org.plugination.connect.core;
 
+import org.plugination.connect.core.webrtc.RTCPeerConnection;
 import org.plugination.connect.core.websocket.WebSocket;
 import org.plugination.connect.core.websocket.WebSocket.EventListener;
 import org.plugination.connect.html.HtmlWebSocket;
+import org.plugination.connect.html.webrtc.HtmlRTCPeerConnection;
 
 public class HtmlConnecterPlatform implements ConnectorPlatform {
 	@Override
@@ -25,8 +27,13 @@ public class HtmlConnecterPlatform implements ConnectorPlatform {
 		return new HtmlWebSocket(url, eventListener);
 	}
 
+	@Override
+	public RTCPeerConnection createRTCPeerConnection(RTCPeerConnection.EventListener listener) {
+		return new HtmlRTCPeerConnection(listener);
+	}
 	public static void init() {
 		Connector.platform = new HtmlConnecterPlatform();
 	}
+
 }
 
