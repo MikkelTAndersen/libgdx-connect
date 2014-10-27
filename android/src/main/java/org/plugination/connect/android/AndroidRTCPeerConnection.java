@@ -337,6 +337,7 @@ public class AndroidRTCPeerConnection implements RTCPeerConnection {
 		@Override
 		public void onCreateSuccess(final SessionDescription sessionDescription) {
 			pc.setLocalDescription(new LocalDescriptionObserver(), sessionDescription);
+			listener.onSetLocalDescription(sessionDescription.description);
 		}
 
 		@Override
@@ -357,7 +358,6 @@ public class AndroidRTCPeerConnection implements RTCPeerConnection {
 
 		@Override
 		public void onCreateSuccess(SessionDescription sessionDescription) {
-			listener.onSetLocalDescription(sessionDescription.description);
 		}
 
 		@Override
