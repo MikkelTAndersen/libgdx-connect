@@ -41,6 +41,8 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 	}
 
 	private List<IceServer> getIceServers() {
+		Gdx.app.debug("Webrtc", "getIceServers");
+
 		LinkedList<PeerConnection.IceServer> iceServers = new LinkedList<PeerConnection.IceServer>();
 	    iceServers.add(new PeerConnection.IceServer("stun:stun.l.google.com:19302"));
 	    iceServers.add(new PeerConnection.IceServer("stun:stun1.l.google.com:19302"));
@@ -66,7 +68,9 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 
 	public RTCDataChannel createOffer() {
 		//TODO figure out how to make it sync with HTML reliable true.
-		dataChannel = pc.createDataChannel("sendDataCh", new Init());
+		Init init = new Init();
+		init.negotiated = false;
+		dataChannel = pc.createDataChannel("sendDataCh", init);
 		pc.createOffer(new OfferObserver(), getConstraints());
 		return new DataChannelEventImpl(dataChannel).getChannel();
 	}
@@ -101,7 +105,7 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 
 			@Override
 			public void onSetFailure(String error) {
-				Gdx.app.log("Webrtc", "Local Description FAILED : " + error);
+				Gdx.app.debug("Webrtc", "Local Description FAILED : " + error);
 			}
 
 			@Override
@@ -110,7 +114,7 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 
 			@Override
 			public void onCreateFailure(String error) {
-				Gdx.app.log("Webrtc", "Local Description FAILED : " + error);
+				Gdx.app.debug("Webrtc", "Local Description FAILED : " + error);
 			}
 		}, sessionDescription);
 	}
@@ -131,7 +135,7 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 
 			@Override
 			public void onSetFailure(String error) {
-				Gdx.app.log("Webrtc", "Remote Description FAILED : " + error);
+				Gdx.app.debug("Webrtc", "Remote Description FAILED : " + error);
 			}
 
 			@Override
@@ -140,7 +144,7 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 
 			@Override
 			public void onCreateFailure(String error) {
-				Gdx.app.log("Webrtc", "Local Description FAILED : " + error);
+				Gdx.app.debug("Webrtc", "Local Description FAILED : " + error);
 			}
 		}, sessionDescription);
 	}
@@ -173,11 +177,11 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 						}
 					});
 
-////					Gdx.app.log("Webrtc", "ADDED LISTENERS " + gwtChannel.getReadyState());
+////					Gdx.app.debug("Webrtc", "ADDED LISTENERS " + gwtChannel.getReadyState());
 //					dataChannel.addMessageHandler(new Handler() {
 //						@Override
 //						public void onMessage(MessageEvent event) {
-////							Gdx.app.log("Webrtc", "onMessage LISTENERS");
+////							Gdx.app.debug("Webrtc", "onMessage LISTENERS");
 //						}
 //					});
 //					dataChannel.addCloseHandler(new CloseEvent.Handler() {
@@ -189,14 +193,14 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 //					dataChannel.addOpenHandler(new com.seanchenxi.gwt.html.client.event.OpenEvent.Handler(){
 //						@Override
 //						public void onOpen(com.seanchenxi.gwt.html.client.event.OpenEvent event) {
-////							Gdx.app.log("Webrtc", "addOpenHandler LISTENERS");
+////							Gdx.app.debug("Webrtc", "addOpenHandler LISTENERS");
 //							dataListener.onOpen();
 //						}
 //					});
 //					dataChannel.addErrorHandler(new ErrorEvent.Handler<NativeEvent>(){
 //						@Override
 //						public void onError(ErrorEvent<NativeEvent> event) {
-////							Gdx.app.log("Webrtc", "onError LISTENERS " +event.toDebugString());
+////							Gdx.app.debug("Webrtc", "onError LISTENERS " +event.toDebugString());
 //							dataListener.onError(event.toDebugString());
 //						}});
 				}
@@ -253,11 +257,11 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 			}
 		}
 		if (mLineIndex == -1) {
-			Gdx.app.log(DesktopRTCPeerConnection.class.getName(), "No m=audio line, so can't prefer iSAC");
+			Gdx.app.debug(DesktopRTCPeerConnection.class.getName(), "No m=audio line, so can't prefer iSAC");
 			return sdpDescription;
 		}
 		if (isac16kRtpMap == null) {
-			Gdx.app.log(DesktopRTCPeerConnection.class.getName(), "No ISAC/16000 line, so can't prefer iSAC");
+			Gdx.app.debug(DesktopRTCPeerConnection.class.getName(), "No ISAC/16000 line, so can't prefer iSAC");
 			return sdpDescription;
 		}
 		String[] origMLineParts = lines[mLineIndex].split(" ");
@@ -293,6 +297,7 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 
 		@Override
 		public void onError() {
+			Gdx.app.debug("Webrtc", "CreatePeerConnectionObserver:onError");
 		}
 
 		@Override
@@ -327,109 +332,114 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 	class OfferObserver implements SdpObserver {
 		@Override
 		public void onSetSuccess() {
+			Gdx.app.debug("Webrtc", "OfferObserver:onSetSuccess");
 		}
 
 		@Override
 		public void onSetFailure(String error) {
-			Gdx.app.log("Webrtc", "OFFER FAILED : " + error);
+			Gdx.app.debug("Webrtc", "OfferObserver:onSetFailure FAILED : " + error);
 		}
 
 		@Override
 		public void onCreateSuccess(final SessionDescription sessionDescription) {
+			Gdx.app.debug("Webrtc", "OfferObserver:onCreateSuccess");
+
 			pc.setLocalDescription(new LocalDescriptionObserver(), sessionDescription);
+			listener.onSetLocalDescription(sessionDescription.description);
 		}
 
 		@Override
 		public void onCreateFailure(String error) {
-			Gdx.app.log("Webrtc", "OFFER FAILED : " + error);
+			Gdx.app.debug("Webrtc", "OfferObserver onCreateFailure FAILED : " + error);
 		}
 	}
 
 	class LocalDescriptionObserver implements SdpObserver {
 		@Override
 		public void onSetSuccess() {
+			Gdx.app.debug("Webrtc", "LocalDescriptionObserver:onSetSuccess");
 		}
 
 		@Override
 		public void onSetFailure(String error) {
-			Gdx.app.log("Webrtc", "OFFER FAILED : " + error);
+			Gdx.app.debug("Webrtc", "LocalDescriptionObserver:onCreateFailure : " + error);
 		}
 
 		@Override
 		public void onCreateSuccess(SessionDescription sessionDescription) {
-			listener.onSetLocalDescription(sessionDescription.description);
+			Gdx.app.debug("Webrtc", "LocalDescriptionObserver:onCreateSuccess");
 		}
 
 		@Override
 		public void onCreateFailure(String error) {
-			Gdx.app.log("Webrtc", "OFFER FAILED : " + error);
+			Gdx.app.debug("Webrtc", "LocalDescriptionObserver:onCreateFailure : " + error);
 		}
 	}
 
 	class RemoteDescriptionObserver implements SdpObserver {
 		@Override
 		public void onSetSuccess() {
-			Gdx.app.log("Webrtc", "setRemoteDescription ANSWER onSetSuccess!!!");
+			Gdx.app.debug("Webrtc", "setRemoteDescription ANSWER onSetSuccess!!!");
 			pc.createAnswer(new CreateAnswerObserver(), getConstraints());
 		}
 
 		@Override
 		public void onSetFailure(String error) {
-			Gdx.app.log("Webrtc", "setRemoteDescription ANSWER FAILED : " + error);
+			Gdx.app.debug("Webrtc", "setRemoteDescription ANSWER FAILED : " + error);
 		}
 
 		@Override
 		public void onCreateSuccess(SessionDescription arg0) {
-			Gdx.app.log("Webrtc", "setRemoteDescription ANSWER onCreateSuccess");
+			Gdx.app.debug("Webrtc", "setRemoteDescription ANSWER onCreateSuccess");
 		}
 
 		@Override
 		public void onCreateFailure(String error) {
-			Gdx.app.log("Webrtc", "setRemoteDescription ANSWER CREATE FAILED : " + error);
+			Gdx.app.debug("Webrtc", "setRemoteDescription ANSWER CREATE FAILED : " + error);
 		}
 	}
 
 	class CreateAnswerObserver implements SdpObserver {
 		@Override
 		public void onSetSuccess() {
-			Gdx.app.log("Webrtc", "createAnswer ANSWER onSetSuccess");
+			Gdx.app.debug("Webrtc", "createAnswer ANSWER onSetSuccess");
 		}
 
 		@Override
 		public void onSetFailure(String error) {
-			Gdx.app.log("Webrtc", "createAnswer ANSWER FAILED : " + error);
+			Gdx.app.debug("Webrtc", "createAnswer ANSWER FAILED : " + error);
 		}
 
 		@Override
 		public void onCreateSuccess(final SessionDescription sessionDescription) {
-			Gdx.app.log("Webrtc", "createAnswer ANSWER onCreateSuccess");
+			Gdx.app.debug("Webrtc", "createAnswer ANSWER onCreateSuccess");
 			pc.setLocalDescription(new SdpObserver() {
 				@Override
 				public void onSetSuccess() {
-					Gdx.app.log("Webrtc", "setLocalDescription ANSWER onSetSuccess");
+					Gdx.app.debug("Webrtc", "setLocalDescription ANSWER onSetSuccess");
 					listener.onSetRemoteDescription(sessionDescription.description);
 				}
 
 				@Override
 				public void onSetFailure(String error) {
-					Gdx.app.log("Webrtc", "setLocalDescription ANSWER FAILED : " + error);
+					Gdx.app.debug("Webrtc", "setLocalDescription ANSWER FAILED : " + error);
 				}
 
 				@Override
 				public void onCreateSuccess(SessionDescription sessionDescription) {
-					Gdx.app.log("Webrtc", "setLocalDescription ANSWER onCreateSuccess");
+					Gdx.app.debug("Webrtc", "setLocalDescription ANSWER onCreateSuccess");
 				}
 
 				@Override
 				public void onCreateFailure(String error) {
-					Gdx.app.log("Webrtc", "setLocalDescription ANSWER FAILED : " + error);
+					Gdx.app.debug("Webrtc", "setLocalDescription ANSWER FAILED : " + error);
 				}
 			}, sessionDescription);
 		}
 
 		@Override
 		public void onCreateFailure(String error) {
-			Gdx.app.log("Webrtc", "ANSWER FAILED : " + error);
+			Gdx.app.debug("Webrtc", "ANSWER FAILED : " + error);
 		}
 	}
 }

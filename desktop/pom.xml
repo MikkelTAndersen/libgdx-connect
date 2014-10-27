@@ -12,10 +12,6 @@
 	<packaging>jar</packaging>
 	<name>Connecter desktop</name>
 
-	<properties>
-		<mainClass>org.plugination.connect.java.ConnecterDesktop</mainClass>
-	</properties>
-
 	<dependencies>
 		<dependency>
 			<groupId>org.plugination</groupId>
@@ -33,12 +29,6 @@
 			<artifactId>gdx-backend-lwjgl</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>com.badlogicgames.gdx</groupId>
-			<artifactId>gdx-platform</artifactId>
-			<classifier>natives-desktop</classifier>
-		</dependency>
-
 		 <dependency>
 	      <groupId>org.java-websocket</groupId>
 	      <artifactId>Java-WebSocket</artifactId>
@@ -51,72 +41,4 @@
 			   <version>6898</version>
 		 </dependency>
 	</dependencies>
-
-	<build>
-		<resources>
-			<resource>
-				<directory>../assets</directory>
-			</resource>
-		</resources>
-
-		<plugins>
-			<!-- this run the game when you invoke: mvn integration-test -Pdesktop -->
-			<plugin>
-				<groupId>com.googlecode.mavennatives</groupId>
-				<artifactId>maven-nativedependencies-plugin</artifactId>
-				<version>0.0.6</version>
-				<executions>
-					<execution>
-						<id>unpacknatives</id>
-						<phase>pre-integration-test</phase>
-						<goals><goal>copy</goal></goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<phase>integration-test</phase>
-						<configuration>
-							<target>
-								<java fork="true" classname="${mainClass}" classpathref="maven.test.classpath">
-									<sysproperty key="java.library.path" value="target/natives"/>
-								</java>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<!-- this builds a totally standalone jar file when you invoke: mvn package -Pdesktop -->
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>${mainClass}</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 </project>

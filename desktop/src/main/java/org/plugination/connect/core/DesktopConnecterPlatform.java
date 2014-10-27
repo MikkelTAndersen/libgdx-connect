@@ -15,8 +15,6 @@
  ******************************************************************************/
 package org.plugination.connect.core;
 
-import org.plugination.connect.core.Connector;
-import org.plugination.connect.core.ConnectorPlatform;
 import org.plugination.connect.core.webrtc.RTCPeerConnection;
 import org.plugination.connect.core.webrtc.RTCPeerConnection.EventListener;
 import org.plugination.connect.core.websocket.WebSocket;
