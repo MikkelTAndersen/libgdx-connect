@@ -69,7 +69,7 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 	public RTCDataChannel createOffer() {
 		//TODO figure out how to make it sync with HTML reliable true.
 		Init init = new Init();
-		init.negotiated = false;
+//		init.negotiated = false;
 		dataChannel = pc.createDataChannel("sendDataCh", init);
 		pc.createOffer(new OfferObserver(), getConstraints());
 		return new DataChannelEventImpl(dataChannel).getChannel();
