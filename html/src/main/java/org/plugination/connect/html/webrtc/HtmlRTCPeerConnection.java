@@ -43,15 +43,25 @@ public class HtmlRTCPeerConnection implements org.plugination.connect.core.webrt
 			public void onDataChannel(DataChannelEvent event) {
 				final DataChannel gwtChannel = event.getChannel();
 				HtmlRTCPeerConnection.this.dataChannel = gwtChannel;
-				listener.onDataChannel(new RTCDataChannelEventImpl(gwtChannel));
+				Gdx.app.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						listener.onDataChannel(new RTCDataChannelEventImpl(gwtChannel));
+					}
+				});
 			}
 		});
 		pc.addIceCandidateHandler(new IceCandidateEvent.Handler() {
 			@Override
 			public void onIceCandidate(IceCandidateEvent event) {
-				RTCIceCandidate candidate = event.getCandidate();
+				final RTCIceCandidate candidate = event.getCandidate();
 				if(candidate != null) {
-					listener.onIceCandidate(candidate.getCandidate(),candidate.getSdpMid(), candidate.getSdpMLineIndex());
+					Gdx.app.postRunnable(new Runnable() {
+						@Override
+						public void run() {
+							listener.onIceCandidate(candidate.getCandidate(),candidate.getSdpMid(), candidate.getSdpMLineIndex());
+						}
+					});
 				}
 			}
 		});
@@ -101,13 +111,18 @@ public class HtmlRTCPeerConnection implements org.plugination.connect.core.webrt
 				WebRTC.createDataChannelInit(true));
 		pc.createOffer(new RTCSessionDescriptionCallback() {
 			@Override
-			public void onSuccess(RTCSessionDescription sessionDescription) {
+			public void onSuccess(final RTCSessionDescription sessionDescription) {
 				hackToFixChromeTransmitSizeIssue(sessionDescription);
-				pc.setLocalDescription(sessionDescription);
-				listener.onSetLocalDescription(sessionDescription.getSdp());
+				Gdx.app.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						pc.setLocalDescription(sessionDescription);
+						listener.onSetLocalDescription(sessionDescription.getSdp());
+					}
+				});
+
 //				Gdx.app.log("Webrtc", "OFFER COMPLETED");
 			}
-
 
 			@Override
 			public void onError(String error) {
@@ -180,8 +195,7 @@ public class HtmlRTCPeerConnection implements org.plugination.connect.core.webrt
 		RTCSessionDescriptionInit descriptionInit = WebRTC
 				.createRTCSessionDescriptionInit(RTCSdpType.OFFER,
 						sessionDescription);
-		RTCSessionDescription sdp = WebRTC
-				.createRTCSessionDescription(descriptionInit);
+		RTCSessionDescription sdp = WebRTC.createRTCSessionDescription(descriptionInit);
 		pc.setLocalDescription(sdp);
 	}
 
@@ -212,34 +226,56 @@ public class HtmlRTCPeerConnection implements org.plugination.connect.core.webrt
 //					Gdx.app.log("Webrtc", "ADDED LISTENERS " + gwtChannel.getReadyState());
 					gwtChannel.addMessageHandler(new Handler() {
 						@Override
-						public void onMessage(MessageEvent event) {
+						public void onMessage(final MessageEvent event) {
 //							Gdx.app.log("Webrtc", "onMessage LISTENERS");
-							dataListener.onMessage((String) event.getData());
+							final String data = (String) event.getData();
+							Gdx.app.postRunnable(new Runnable() {
+								@Override
+								public void run() {
+									dataListener.onMessage(data);
+								}
+							});
 						}
 					});
 					gwtChannel.addCloseHandler(new CloseEvent.Handler() {
 						@Override
 						public void onClose(CloseEvent event) {
-							dataListener.onClose();
+							Gdx.app.postRunnable(new Runnable() {
+								@Override
+								public void run() {
+									dataListener.onClose();
+								}
+							});
 						}
 					});
 					gwtChannel.addOpenHandler(new com.seanchenxi.gwt.html.client.event.OpenEvent.Handler(){
 						@Override
 						public void onOpen(com.seanchenxi.gwt.html.client.event.OpenEvent event) {
 //							Gdx.app.log("Webrtc", "addOpenHandler LISTENERS");
-							dataListener.onOpen();
+							Gdx.app.postRunnable(new Runnable() {
+								@Override
+								public void run() {
+									dataListener.onOpen();
+								}
+							});
 						}
 					});
 					gwtChannel.addErrorHandler(new ErrorEvent.Handler<NativeEvent>(){
 						@Override
-						public void onError(ErrorEvent<NativeEvent> event) {
+						public void onError(final ErrorEvent<NativeEvent> event) {
 //							Gdx.app.log("Webrtc", "onError LISTENERS " +event.toDebugString());
-							dataListener.onError(event.toDebugString());
+							final String debugString = event.toDebugString();
+							Gdx.app.postRunnable(new Runnable() {
+								@Override
+								public void run() {
+									dataListener.onError(debugString);
+								}
+							});
 						}});
 				}
 
 				@Override
-				public void send(String data) {
+				public void send(final String data) {
 					gwtChannel.send(data);
 				}
 

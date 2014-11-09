@@ -23,6 +23,7 @@ import org.plugination.connect.html.websocket.events.CloseEvent;
 import org.plugination.connect.html.websocket.events.MessageEvent;
 import org.plugination.connect.html.websocket.events.OpenEvent;
 
+import com.badlogic.gdx.Gdx;
 import com.google.gwt.typedarrays.shared.ArrayBuffer;
 import com.google.gwt.typedarrays.shared.TypedArrays;
 import com.google.gwt.typedarrays.shared.Uint8Array;
@@ -37,21 +38,43 @@ public class HtmlWebSocket implements org.plugination.connect.core.websocket.Web
 		ws.setListener(new WebSocket.EventListener() {
 			@Override
 			public void onOpen(WebSocket socket, OpenEvent event) {
-				eventListener.onOpen();
+				Gdx.app.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						eventListener.onOpen();
+					}
+				});
 			}
 
 			@Override
 			public void onMessage(WebSocket socket, MessageEvent event) {
 				if (event.dataIsText()) {
-					eventListener.onTextMessage(event.stringData());
+					final String stringData = event.stringData();
+					Gdx.app.postRunnable(new Runnable() {
+						@Override
+						public void run() {
+							eventListener.onTextMessage(stringData);
+						}
+					});
 				} else {
-					eventListener.onDataMessage(wrapper.wrap(event.bufferData()));
+					final ByteBuffer data = wrapper.wrap(event.bufferData());
+					Gdx.app.postRunnable(new Runnable() {
+						@Override
+						public void run() {
+							eventListener.onDataMessage(data);
+						}
+					});
 				}
 			}
 
 			@Override
 			public void onClose(WebSocket socket, CloseEvent event) {
-				eventListener.onClose();
+				Gdx.app.postRunnable(new Runnable() {
+					@Override
+					public void run() {
+						eventListener.onClose();
+					}
+				});
 			}
 		});
 	}
