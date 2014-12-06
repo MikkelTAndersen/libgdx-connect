@@ -152,6 +152,5 @@
         <module>desktop</module>
         <module>android</module>
         <module>html</module>
-        <module>ios</module>
 	</modules>
 </project>
