@@ -1,5 +1,13 @@
 package org.plugination.connect.core.webrtc;
 
+/**
+ * This is meant for webrtc data channel only (audio and video is not implemented).
+ *
+ * To fully understand Webrtc's datachannel - please read the Javascript of this: <a href="http://www.simpl.info/rtcdatachannel">link</a>
+ *
+ * @author mikkelandersen
+ * @see <a href="http://w3c.github.io/webrtc-pc/#rtcdatachannel">Webrtc datachannel spec</a>
+ */
 public interface RTCPeerConnection {
 	interface EventListener {
 		void onDataChannel(RTCDataChannelEvent event);
@@ -15,9 +23,19 @@ public interface RTCPeerConnection {
 
 	RTCDataChannel createOffer();
 
+	void setLocalDescription(String sessionDescription);
 
+	String getLocalDescription();
 
-	public interface RTCDataChannel {
+	void setRemoteDescription(String sessionDescription);
+
+	String getRemoteDescription();
+
+	void createAnswer(String sdp);
+
+	void addIceCandidate(String candidate, String sdpMid, int sdpMLineIndex);
+
+	interface RTCDataChannel {
 		void send(String data);
 
 		void close();
@@ -35,20 +53,5 @@ public interface RTCPeerConnection {
 
 			void onOpen();
 		}
-
-
 	}
-
-	String getLocalDescription();
-
-	void setLocalDescription(String sessionDescription);
-
-	String getRemoteDescription();
-
-	void setRemoteDescription(String sessionDescription);
-
-	void createAnswer(String sdp);
-
-	void addIceCandidate(String candidate, String sdpMid, int sdpMLineIndex);
-
 }
