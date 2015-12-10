@@ -91,7 +91,11 @@ public class DesktopRTCPeerConnection implements RTCPeerConnection {
 	public void addIceCandidate(String candidate, String sdpMid,
 			int sdpMLineIndex) {
 		if (candidate != null) {
-			pc.addIceCandidate(new IceCandidate(sdpMid, sdpMLineIndex, candidate));
+			try {
+				pc.addIceCandidate(new IceCandidate(sdpMid, sdpMLineIndex, candidate));
+			} catch(Exception e) {
+				Gdx.app.log("Webrtc could not add ice", candidate + " " + sdpMid + " " + sdpMLineIndex);
+			}
 		}
 	}
 

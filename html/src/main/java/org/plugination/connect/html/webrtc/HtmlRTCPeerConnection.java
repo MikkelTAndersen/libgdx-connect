@@ -180,12 +180,16 @@ public class HtmlRTCPeerConnection implements org.plugination.connect.core.webrt
 			int sdpMLineIndex) {
 		if (candidate != null) {
 //			Gdx.app.log("Webrtc", candidate + " " + sdpMid + " " + sdpMLineIndex);
-			RTCIceCandidateInit iceCandidateInit = WebRTC
+			try {
+				RTCIceCandidateInit iceCandidateInit = WebRTC
 					.createRTCIceCandidateInit(candidate, sdpMid, sdpMLineIndex);
-			RTCIceCandidate iceCandidate = WebRTC
+				RTCIceCandidate iceCandidate = WebRTC
 					.createRTCIceCandidate(iceCandidateInit);
-			if (iceCandidate != null) {
-				pc.addIceCandidate(iceCandidate);
+				if (iceCandidate != null) {
+					pc.addIceCandidate(iceCandidate);
+				}
+			} catch(Exception e) {
+				Gdx.app.log("Webrtc could not add ice", candidate + " " + sdpMid + " " + sdpMLineIndex);
 			}
 		}
 	}
