@@ -13,7 +13,7 @@
 		<android.maven.version>3.8.1</android.maven.version>
 		<gwt.version>2.7.0</gwt.version>
 		<gwt.maven.version>2.7.0</gwt.maven.version>
-        <gdx.version>1.7.2-SNAPSHOT</gdx.version>
+        <gdx.version>1.9.3-SNAPSHOT</gdx.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
