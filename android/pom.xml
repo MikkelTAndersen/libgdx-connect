@@ -53,7 +53,8 @@
 	    <dependency>
 			<groupId>io.pristine</groupId>
 			<artifactId>libjingle_peerconnection</artifactId>
-			<version>6898</version>
+		    <version>11711.0.0</version>
+		    <!-- mvn install:install-file -Dfile=libjingle_peerconnection.jar -DgroupId=io.pristine -DartifactId=libjingle_peerconnection -Dversion=11711.0.0 -Dpackaging=jar -->
 		</dependency>
 	</dependencies>
 </project>

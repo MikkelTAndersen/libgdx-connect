@@ -171,6 +171,10 @@ public class AndroidRTCPeerConnection implements RTCPeerConnection {
 								}
 							});
 						}
+
+						@Override
+						public void onBufferedAmountChange (long arg0) {
+						}
 					});
 
 ////					Gdx.app.log("Webrtc", "ADDED LISTENERS " + gwtChannel.getReadyState());
@@ -292,10 +296,6 @@ public class AndroidRTCPeerConnection implements RTCPeerConnection {
 		}
 
 		@Override
-		public void onError() {
-		}
-
-		@Override
 		public void onIceCandidate(IceCandidate iceCandidate) {
 			if (iceCandidate.sdp != null) {
 				listener.onIceCandidate(iceCandidate.sdp, iceCandidate.sdpMid,
@@ -321,6 +321,10 @@ public class AndroidRTCPeerConnection implements RTCPeerConnection {
 
 		@Override
 		public void onRenegotiationNeeded() {
+		}
+
+		@Override
+		public void onIceConnectionReceivingChange (boolean arg0) {
 		}
 	}
 
