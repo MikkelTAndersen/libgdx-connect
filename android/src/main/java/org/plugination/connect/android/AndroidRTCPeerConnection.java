@@ -297,7 +297,7 @@ public class AndroidRTCPeerConnection implements RTCPeerConnection {
 
 		@Override
 		public void onIceCandidate(IceCandidate iceCandidate) {
-			if (iceCandidate.sdp != null) {
+			if (iceCandidate.sdp != null && !iceCandidate.sdp.trim().equals("")) {
 				listener.onIceCandidate(iceCandidate.sdp, iceCandidate.sdpMid,
 						iceCandidate.sdpMLineIndex);
 			}
